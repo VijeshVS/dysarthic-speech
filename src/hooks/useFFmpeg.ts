@@ -34,12 +34,11 @@ export function useFFmpeg(): UseFFmpegReturn {
         setProgress(Math.round(p * 100));
       });
 
-      // ✅ Changed: umd → esm, added workerURL
-      const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt@0.12.6/dist/esm';
+      // Single-threaded core — no SharedArrayBuffer / COOP-COEP headers needed
+      const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm';
       await ffmpeg.load({
-        coreURL:   await toBlobURL(`${baseURL}/ffmpeg-core.js`,        'text/javascript'),
-        wasmURL:   await toBlobURL(`${baseURL}/ffmpeg-core.wasm`,      'application/wasm'),
-        workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript'),
+        coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`,   'text/javascript'),
+        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
       });
 
       ffmpegRef.current = ffmpeg;
