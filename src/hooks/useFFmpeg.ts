@@ -70,7 +70,10 @@ export function useFFmpeg(): UseFFmpegReturn {
         await ffmpeg.exec(['-i', inputName, '-vn', '-acodec', 'pcm_s16le', '-ar', '16000', '-ac', '1', 'output.wav']);
 
         const data = await ffmpeg.readFile('output.wav');
-        const audioBlob = new Blob([data as Uint8Array], { type: 'audio/wav' });
+        // .slice() creates a new Uint8Array backed by a plain ArrayBuffer,
+        // satisfying the BlobPart constraint in TS 6.0.
+        const bytes = (data as Uint8Array).slice();
+        const audioBlob = new Blob([bytes], { type: 'audio/wav' });
         const audioUrl = URL.createObjectURL(audioBlob);
 
         await ffmpeg.deleteFile(inputName);
